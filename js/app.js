@@ -39,149 +39,156 @@
 
     var newMarker = null;
     var markers = [];
+//-----------------> my code <--------------------------//
+  /* get current position
+  **
+  */
+  var mapCenter = {
+    'lat': 52.529231599999996,
+    'lng': 13.378650799999999
+  };
+  var optionObj = {
+    "enableHighAccuracy": false ,
+    "timeout": 8000 ,
+    "maximumAge": 5000 ,
+  };
 
-    // json for properties markers on map
-    var props = [{
-        title : 'Modern Residence in New York',
-        image : 'http://files.gamebanana.com/img/ico/sprays/jules_pulp_copy.jpg',
-        type : 'For Sale',
-        price : '$1,550,000',
-        address : '39 Remsen St, Brooklyn, NY 11201, USA',
-        bedrooms : '3',
-        bathrooms : '2',
-        area : '3430 Sq Ft',
-        position : {
-            lat : 52.5233,
-            lng : 13.2519
-        },
-        markerIcon : "marker-red.png"
-    }, {
-        title : 'Hauntingly Beautiful Estate',
-        image : '2-1-thmb.png',
-        type : 'For Rent',
-        price : '$1,750,000',
-        address : '169 Warren St, Brooklyn, NY 11201, USA',
-        bedrooms : '2',
-        bathrooms : '2',
-        area : '4430 Sq Ft',
-        position : {
-            lat : 52.5227,
-            lng : 13.2545
-        },
-        markerIcon : "marker-green.png"
-    }, {
-        title : 'Sophisticated Residence',
-        image : '3-1-thmb.png',
-        type : 'For Sale',
-        price : '$1,340,000',
-        address : '38-62 Water St, Brooklyn, NY 11201, USA',
-        bedrooms : '2',
-        bathrooms : '3',
-        area : '2640 Sq Ft',
-        position : {
-            lat : 52.5219,
-            lng : 13.2589
-        },
-        markerIcon : "marker-green.png"
-    }, {
-        title : 'House With a Lovely Glass-Roofed Pergola',
-        image : '4-1-thmb.png',
-        type : 'For Sale',
-        price : '$1,930,000',
-        address : 'Wunsch Bldg, Brooklyn, NY 11201, USA',
-        bedrooms : '3',
-        bathrooms : '2',
-        area : '2800 Sq Ft',
-        position : {
-            lat : 52.5185,
-            lng : 13.2781
-        },
-        markerIcon : "marker-green.png"
-    }, {
-        title : 'Luxury Mansion',
-        image : '5-1-thmb.png',
-        type : 'For Rent',
-        price : '$2,350,000',
-        address : '95 Butler St, Brooklyn, NY 11231, USA',
-        bedrooms : '2',
-        bathrooms : '2',
-        area : '2750 Sq Ft',
-        position : {
-            lat : 40.686838,
-            lng : -73.990078
-        },
-        markerIcon : "marker-green.png"
-    }, {
-        title : 'Modern Residence in New York',
-        image : '1-1-thmb.png',
-        type : 'For Sale',
-        price : '$1,550,000',
-        address : '39 Remsen St, Brooklyn, NY 11201, USA',
-        bedrooms : '3',
-        bathrooms : '2',
-        area : '3430 Sq Ft',
-        position : {
-            lat : 40.703686,
-            lng : -73.982910
-        },
-        markerIcon : "marker-green.png"
-    }, {
-        title : 'Hauntingly Beautiful Estate',
-        image : '2-1-thmb.png',
-        type : 'For Rent',
-        price : '$1,750,000',
-        address : '169 Warren St, Brooklyn, NY 11201, USA',
-        bedrooms : '2',
-        bathrooms : '2',
-        area : '4430 Sq Ft',
-        position : {
-            lat : 40.702189,
-            lng : -73.995098
-        },
-        markerIcon : "marker-green.png"
-    }, {
-        title : 'Sophisticated Residence',
-        image : '3-1-thmb.png',
-        type : 'For Sale',
-        price : '$1,340,000',
-        address : '38-62 Water St, Brooklyn, NY 11201, USA',
-        bedrooms : '2',
-        bathrooms : '3',
-        area : '2640 Sq Ft',
-        position : {
-            lat : 40.687417,
-            lng : -73.982653
-        },
-        markerIcon : "marker-green.png"
-    }, {
-        title : 'House With a Lovely Glass-Roofed Pergola',
-        image : '4-1-thmb.png',
-        type : 'For Sale',
-        price : '$1,930,000',
-        address : 'Wunsch Bldg, Brooklyn, NY 11201, USA',
-        bedrooms : '3',
-        bathrooms : '2',
-        area : '2800 Sq Ft',
-        position : {
-            lat : 40.694120,
-            lng : -73.974413
-        },
-        markerIcon : "marker-green.png"
-    }, {
-        title : 'Luxury Mansion',
-        image : '5-1-thmb.png',
-        type : 'For Rent',
-        price : '$2,350,000',
-        address : '95 Butler St, Brooklyn, NY 11231, USA',
-        bedrooms : '2',
-        bathrooms : '2',
-        area : '2750 Sq Ft',
-        position : {
-            lat : 40.682665,
-            lng : -74.000934
-        },
-        markerIcon : "marker-green.png"
-    }];
+  if(navigator.geolocation) {
+    console.log( "Your device can get your current location" );
+    //console.log(optionObj);
+    //navigator.geolocation.getCurrentPosition(successFunc , errorFunc , optionObj);
+  } else {
+    console.log("Your device cannot get your current location");
+  }
+
+  function successFunc( position ) {
+    console.log('success');
+    mapCenter.lat = position.coords.latitude;
+    mapCenter.lng = position.coords.longitude;
+    console.log(mapCenter);
+  }
+
+  function errorFunc( error ) {
+  // エラーコードのメッセージを定義
+    var errorMessage = {
+      0: "原因不明のエラーが発生しました…。" ,
+      1: "位置情報の取得が許可されませんでした…。" ,
+      2: "電波状況などで位置情報が取得できませんでした…。" ,
+      3: "位置情報の取得に時間がかかり過ぎてタイムアウトしました…。" ,
+    };
+
+    console.log("error: " + errorMessage[error.code]);
+  }
+
+
+  // json for properties markers on map
+  var props = [];
+  var getPotholes = function getPotholes() {
+    $.getJSON('./get_map.json', function(data) {
+      if(data.error === true) {
+
+        console.log(data.error);
+      } else {
+        console.log("ok");
+
+        var _potholes = data.potholes;
+        $.each( _potholes, function( key, val ) {
+          var _pothole = makeMaker(val);
+          props.push(_pothole);
+          //console.log(_pothole);
+        });
+      }
+    });
+  };
+
+    getPotholes();
+    /* making marker
+    **
+    **
+    */
+    var makeMaker = function makeMaker(in_obj){
+      var _avrLat = (Number(in_obj.from_lat) + Number(in_obj.to_lat)) / 2;
+      var _avrLng = (Number(in_obj.from_lng) + Number(in_obj.to_lng)) / 2;
+
+      var _markerColor = '';
+      var today = new Date;
+      var _temp = in_obj.expected_date.split('-');
+      var _year = _temp[0];
+      var _month = _temp[1];
+      var _date = _temp[2];
+      var expected_date = new Date(_year, _month, _date);
+
+      var _diff = (expected_date.getTime() - today.getTime())/(1000 * 60 * 60 *24*365);
+      _diff = Math.floor(_diff);
+
+      var _price = Number(in_obj.expected_cost);
+      if(_diff < 3) {
+        _markerColor = 'green';
+        //_price *= 1;
+      } else if (( _diff >= 3) && (_diff < 6)) {
+        _markerColor = 'yellow';
+        _price *= 2;
+      } else if (_diff >= 6) {
+        _markerColor = 'red';
+        _price *= 3;
+      } else {
+        console.log('never come here!');
+      }
+      console.log('lat: ' + Math.round( _avrLat * 10000 ) / 10000 + ', ' + 'lng: ' + Math.round( _avrLng * 10000 ) / 10000);
+      var out_obj = {
+        'title': in_obj.street_name,
+        'image' : '2-1-thmb.png',
+        'type' : 'For Sale',
+        'price' : '€' + _price,
+        'address' : 'lat: ' + Math.round( _avrLat * 1000 ) / 1000 + ', ' + 'lng: ' + Math.round( _avrLng * 1000 ) / 1000,
+        'bedrooms' : '3',
+        'bathrooms' : '2',
+        'area' : '3430 Sq Ft',
+        'position' : {
+              'lat' : _avrLat,
+              'lng' : _avrLng
+          },
+        'markerIcon' : "marker-" + _markerColor+ ".png"
+      };
+
+      return out_obj;
+    };
+
+  // filter ling
+  function setMapOnAll(map) {
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+    }
+  }
+  function clearMarkers() {
+    setMapOnAll(null);
+  }
+  function deleteMarkers() {
+    clearMarkers();
+    markers = [];
+  }
+
+  // test code
+  document.onkeydown = function (e){
+    if(!e) e = window.event;
+    //console.log(e.keyCode);
+
+
+    if(e.keyCode === 68){
+      // d key
+      clearMarkers();
+
+    } else if(e.keyCode === 32) {
+      // space key
+      addMarkers(props, map);
+      // for (var i = 0; i < markers.length; i++) {
+      //   addMarkerWithTimeout(markers[i], i * 200);
+      // }
+    }
+  };
+
+//-----------------> my code <--------------------------//
+
 
     // custom infowindow object
     var infobox = new InfoBox({
@@ -216,15 +223,15 @@
                     null,
                     new google.maps.Size(36, 36)
                 ),
-                draggable: false,
-                animation: google.maps.Animation.DROP,
+                draggable: false
+                //,animation: google.maps.Animation.DROP,
             });
             var infoboxContent = '<div class="infoW">' +
                                     '<div class="propImg">' +
                                         '<img src="images/prop/' + prop.image + '">' +
                                         '<div class="propBg">' +
                                             '<div class="propPrice">' + prop.price + '</div>' +
-                                            '<div class="propType">' + prop.type + '</div>' +
+                                            //'<div class="propType">' + prop.type + '</div>' +
                                         '</div>' +
                                     '</div>' +
                                     '<div class="paWrapper">' +
@@ -360,12 +367,12 @@
         });
 
         map.mapTypes.set('Styled', styledMapType);
-        map.setCenter(new google.maps.LatLng(52.5304723,13.3727941));
-        map.setZoom(14);
+        map.setCenter(new google.maps.LatLng(52.529231599999996,13.378650799999999));
+        map.setZoom(19);
 
         if ($('#address').length > 0) {
             newMarker = new google.maps.Marker({
-                position: new google.maps.LatLng(52.5304723,13.3727941),
+                position: new google.maps.LatLng(52.529231599999996,13.378650799999999),
                 map: map,
                 icon: new google.maps.MarkerImage(
                     'images/marker-new.png',
@@ -512,20 +519,22 @@
         step: 10000,
         slide: function(event, ui) {
             $('.priceSlider .sliderTooltip .stLabel').html(
-                '$' + ui.values[0].toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") + 
+                '€' + ui.values[0].toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") + 
                 ' <span class="fa fa-arrows-h"></span> ' +
-                '$' + ui.values[1].toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
+                '€' + ui.values[1].toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
             );
             var priceSliderRangeLeft = parseInt($('.priceSlider .ui-slider-range').css('left'));
             var priceSliderRangeWidth = $('.priceSlider .ui-slider-range').width();
             var priceSliderLeft = priceSliderRangeLeft + ( priceSliderRangeWidth / 2 ) - ( $('.priceSlider .sliderTooltip').width() / 2 );
             $('.priceSlider .sliderTooltip').css('left', priceSliderLeft);
+
+
         }
     });
     $('.priceSlider .sliderTooltip .stLabel').html(
-        '$' + $('.priceSlider').slider('values', 0).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") + 
+        '€' + $('.priceSlider').slider('values', 0).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") +
         ' <span class="fa fa-arrows-h"></span> ' +
-        '$' + $('.priceSlider').slider('values', 1).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
+        '€' + $('.priceSlider').slider('values', 1).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
     );
     var priceSliderRangeLeft = parseInt($('.priceSlider .ui-slider-range').css('left'));
     var priceSliderRangeWidth = $('.priceSlider .ui-slider-range').width();
@@ -658,13 +667,18 @@
 
     $("#slider1").slider({
         range: "min",
-        value: 50,
-        min: 1,
-        max: 100,
+        value: 14,
+        min: 10,
+        max: 19,
         slide: repositionTooltip,
-        stop: repositionTooltip
+        stop: repositionTooltip,
+        slide: function(event, ui) {
+            console.log('year: ' + ui.values[0] + '-' + ui.values[1]);
+        }
     });
-    $("#slider1 .ui-slider-handle:first").tooltip({ title: $("#slider1").slider("value"), trigger: "manual"}).tooltip("show");
+    $("#slider1 .ui-slider-handle:first").tooltip({
+        title: $("#slider1").slider("value"),
+        trigger: "manual"}).tooltip("show");
 
     $("#slider2").slider({
         range: "max",

@@ -17,6 +17,11 @@
           <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
           <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
+        <style>
+        .ui-slider-range.ui-widget-header.ui-corner-all.ui-slider-range-min {
+          background-color: transparent;
+        }
+        </style>
     </head>
     <body class="notransition">
 
@@ -189,12 +194,8 @@
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-8 formItem">
                                 <div class="formField">
-                                    <label>Area Range</label>
-                                    <div class="slider areaSlider">
-                                        <div class="sliderTooltip">
-                                            <div class="stArrow"></div>
-                                            <div class="stLabel"></div>
-                                        </div>
+                                    <label>Zoom</label>
+                                    <div class="slider" id="slider1"></div>
                                     </div>
                                 </div>
                             </div>
@@ -574,7 +575,7 @@
         <script src="js/infobox.js"></script>
         <script src="js/jquery.tagsinput.min.js"></script>
         <script src="js/bootstrap-datepicker.js"></script>
-        <script src="js/utils.js"></script>
+        <script src="js/lodash.min.js"></script>
         <script src="js/app.js" type="text/javascript"></script>
     </body>
 </html>
