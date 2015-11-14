@@ -743,7 +743,6 @@
           filter.min_cost = ui.values[0];
           filter.max_cost = ui.values[1];
           var _props = filterByCost(props, ui.values[0], ui.values[1]);
-          _props = filterByYear(props, filter.min_year, filter.max_year);
           addMarkers(_props, map);
           //console.log('year: ' + ui.values[0] + '-' + ui.values[1]);
         }
@@ -807,8 +806,8 @@
           clearMarkers();
           filter.min_year = ui.values[0];
           filter.max_year = ui.values[1];
-          var _props = filterByCost(props, filter.min_cost, filter.max_cost);
-          _props = filterByYear(_props, ui.values[0], ui.values[1]);
+          //var _props = filterByCost(props, filter.min_cost, filter.max_cost);
+          var _props = filterByYear(props, ui.values[0], ui.values[1]);
           addMarkers(_props, map);
           //console.log('year: ' + ui.values[0] + '-' + ui.values[1]);
         }
