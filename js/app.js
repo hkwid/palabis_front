@@ -330,6 +330,26 @@
         return _out;
     };
 
+    function filterByCostAndYear(props, min_cost, max_cost, min_year, max_year) {
+      var _out = [];
+      var _minYear = Number(min_year);
+      var _maxYear = Number(max_year);
+      console.log('cost: ' + min_cost + ' - ' + max_cost);
+      console.log('year: ' + _minYear + ' - ' + _maxYear);
+      $.map(props, function(prop, id) {
+          var _cost = prop.price.replace(/€/gi, '');
+          _cost = Number(_cost);
+          var _expected_date = castToDate(prop.expected_date);
+          var _year = _expected_date.getFullYear();
+
+
+          if((_cost >= min_cost) && (_cost <= max_cost) && (_year >= min_year) && (_year <= max_year)) {
+            _out.push(prop);
+          }
+        });
+      return _out;
+    }
+
     function simulateByYear(props, sim_year) {
 
         console.log('sim_year: ' + sim_year);
@@ -742,7 +762,8 @@
           // filter.max_cost = parseInt(ui.values[1], 10);
           filter.min_cost = ui.values[0];
           filter.max_cost = ui.values[1];
-          var _props = filterByCost(props, ui.values[0], ui.values[1]);
+          //var _props = filterByCost(props, ui.values[0], ui.values[1]);
+          var _props = filterByCostAndYear(props, filter.min_cost, filter.max_cost, filter.min_year, filter.max_year);
           addMarkers(_props, map);
           //console.log('year: ' + ui.values[0] + '-' + ui.values[1]);
         }
@@ -807,7 +828,8 @@
           filter.min_year = ui.values[0];
           filter.max_year = ui.values[1];
           //var _props = filterByCost(props, filter.min_cost, filter.max_cost);
-          var _props = filterByYear(props, ui.values[0], ui.values[1]);
+          //var _props = filterByYear(props, ui.values[0], ui.values[1]);
+          var _props = filterByCostAndYear(props, filter.min_cost, filter.max_cost, filter.min_year, filter.max_year);
           addMarkers(_props, map);
           //console.log('year: ' + ui.values[0] + '-' + ui.values[1]);
         }
@@ -897,8 +919,8 @@
         slide: function(event, ui) {
             repositionTooltip
             map.setZoom(ui.value);
-            //getDummyPotholes();
             getPotholes(map);
+            //getDummyPotholes();
             setTimeout(function(){
               addMarkers(props, map);
             }, 400);
@@ -916,8 +938,7 @@
         stop: repositionTooltip,
         change: function(event, ui){
           clearMarkers();
-          var _props = filterByCost(props, filter.min_cost, filter.max_cost);
-          _props = filterByYear(_props, filter.min_year, filter.max_year);
+          var _props = filterByCostAndYear(props, filter.min_cost, filter.max_cost, filter.min_year, filter.max_year);
           _props = simulateByYear(_props, ui.value);
           setTimeout(addMarkers(_props, map), 400);
         }
