@@ -1,104 +1,482 @@
 {
-    "error": false,
-    "potholes": [
-        {
-            "id": "1",
-            "pot_id": "1",
-            "street_name": "Spandauer Damm",
-            "lat": "52.5233",
-            "lng": "13.2519",
-            "expected_date": "2018-03-01",
-            "expected_cost": null
-        },
-        {
-            "id": "2",
-            "pot_id": "1",
-            "street_name": "Spandauer Damm",
-            "lat": "52.5227",
-            "lng": "13.2545",
-            "expected_date": "2018-03-01",
-            "expected_cost": null
-        },
-        {
-            "id": "3",
-            "pot_id": "1",
-            "street_name": "Spandauer Damm",
-            "lat": "52.5219",
-            "lng": "13.2589",
-            "expected_date": "2018-03-01",
-            "expected_cost": null
-        },
-        {
-            "id": "4",
-            "pot_id": "1",
-            "street_name": "Spandauer Damm",
-            "lat": "52.5185",
-            "lng": "13.2781",
-            "expected_date": "2018-03-01",
-            "expected_cost": null
-        },
-        {
-            "id": "5",
-            "pot_id": "1",
-            "street_name": "Spandauer Damm",
-            "lat": "52.5183",
-            "lng": "13.2789",
-            "expected_date": "2018-03-01",
-            "expected_cost": null
-        },
-        {
-            "id": "6",
-            "pot_id": "2",
-            "street_name": "Hardenberg str",
-            "lat": "52.5117",
-            "lng": "13.3226",
-            "expected_date": "2016-02-01",
-            "expected_cost": null
-        },
-        {
-            "id": "7",
-            "pot_id": "2",
-            "street_name": "Hardenberg str",
-            "lat": "52.5092",
-            "lng": "13.326",
-            "expected_date": "2016-02-01",
-            "expected_cost": "10000"
-        },
-        {
-            "id": "8",
-            "pot_id": "3",
-            "street_name": "Leibnitz str",
-            "lat": "52.5005",
-            "lng": "13.3317",
-            "expected_date": "2021-02-01",
-            "expected_cost": "10000"
-        },
-        {
-            "id": "9",
-            "pot_id": "3",
-            "street_name": "Leibnitz str",
-            "lat": "52.4995",
-            "lng": "13.3349",
-            "expected_date": "2021-02-01",
-            "expected_cost": "30000"
-        },
-        {
-            "id": "10",
-            "pot_id": "3",
-            "street_name": "Leibnitz str",
-            "lat": "52.4994",
-            "lng": "13.3358",
-            "expected_date": "2021-02-01",
-            "expected_cost": "40000"
-        },
-        {
-            "id": "11",
-            "pot_id": "3",
-            "street_name": "Leibnitz str",
-            "lat": "52.4993",
-            "lng": "13.3367",
-            "expected_date": "2021-02-01",
-            "expected_cost": "40000"
-        }
-    ]
+  "error": false,
+  "potholes": [
+    {
+      "id": "1",
+      "pot_id": "1",
+      "street_name": "-",
+      "lat": "52.52",
+      "lng": "13.405",
+      "expected_date": "2009-02-18",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "2",
+      "pot_id": "1",
+      "street_name": "Aalemannufer",
+      "lat": "52.5731",
+      "lng": "13.2182",
+      "expected_date": "2021-07-21",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "3",
+      "pot_id": "1",
+      "street_name": "Adamstr.",
+      "lat": "52.521",
+      "lng": "13.1933",
+      "expected_date": "2016-07-21",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "4",
+      "pot_id": "1",
+      "street_name": "Afrikanische Str.",
+      "lat": "52.5527",
+      "lng": "13.3368",
+      "expected_date": "2023-06-19",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "5",
+      "pot_id": "1",
+      "street_name": "Albrechtstr.",
+      "lat": "52.4518",
+      "lng": "13.3344",
+      "expected_date": "2025-08-27",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "6",
+      "pot_id": "1",
+      "street_name": "Alemannenstr.",
+      "lat": "52.6336",
+      "lng": "13.2809",
+      "expected_date": "2024-04-09",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "7",
+      "pot_id": "1",
+      "street_name": "Alexanderstr.",
+      "lat": "52.5193",
+      "lng": "13.4169",
+      "expected_date": "2026-05-11",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "8",
+      "pot_id": "1",
+      "street_name": "Alt-Gatow",
+      "lat": "52.4866",
+      "lng": "13.1824",
+      "expected_date": "2006-10-12",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "9",
+      "pot_id": "1",
+      "street_name": "Alt-Heiligensee",
+      "lat": "52.6067",
+      "lng": "13.2123",
+      "expected_date": "2021-07-21",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "10",
+      "pot_id": "1",
+      "street_name": "Alt-Lankwitz",
+      "lat": "52.4372",
+      "lng": "13.3589",
+      "expected_date": "2026-05-11",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "11",
+      "pot_id": "1",
+      "street_name": "Alt-Moabit",
+      "lat": "52.5247",
+      "lng": "13.3482",
+      "expected_date": "2013-01-09",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "12",
+      "pot_id": "1",
+      "street_name": "Alt-Wittenau",
+      "lat": "52.5914",
+      "lng": "13.3285",
+      "expected_date": "2010-10-28",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "13",
+      "pot_id": "1",
+      "street_name": "Altensteinstr.",
+      "lat": "52.4522",
+      "lng": "13.2971",
+      "expected_date": "2002-09-21",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "14",
+      "pot_id": "1",
+      "street_name": "Altonaer Str.",
+      "lat": "52.5171",
+      "lng": "13.3441",
+      "expected_date": "2004-10-13",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "15",
+      "pot_id": "1",
+      "street_name": "Am Eichenhain",
+      "lat": "52.6329",
+      "lng": "13.266",
+      "expected_date": "2016-07-21",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "16",
+      "pot_id": "1",
+      "street_name": "Am Juliusturm",
+      "lat": "52.5379",
+      "lng": "13.2171",
+      "expected_date": "2006-12-31",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "17",
+      "pot_id": "1",
+      "street_name": "Am Kiesteich",
+      "lat": "52.5472",
+      "lng": "13.1622",
+      "expected_date": "2005-08-06",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "18",
+      "pot_id": "1",
+      "street_name": "Am Nordgraben",
+      "lat": "52.5882",
+      "lng": "13.3172",
+      "expected_date": "2026-05-11",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "19",
+      "pot_id": "1",
+      "street_name": "Am Schillertheater",
+      "lat": "52.5119",
+      "lng": "13.3175",
+      "expected_date": "2020-09-06",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "20",
+      "pot_id": "1",
+      "street_name": "An der Urania",
+      "lat": "52.5019",
+      "lng": "13.3484",
+      "expected_date": "2005-08-06",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "21",
+      "pot_id": "1",
+      "street_name": "Angerburger Allee",
+      "lat": "52.5102",
+      "lng": "13.2232",
+      "expected_date": "2028-10-13",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "22",
+      "pot_id": "1",
+      "street_name": "Antonienstr.",
+      "lat": "52.5716",
+      "lng": "13.3119",
+      "expected_date": "2007-12-01",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "23",
+      "pot_id": "1",
+      "street_name": "Appenzeller Str.",
+      "lat": "52.4231",
+      "lng": "13.2973",
+      "expected_date": "2013-05-16",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "24",
+      "pot_id": "1",
+      "street_name": "Argentinische Alle",
+      "lat": "52.4478",
+      "lng": "13.2468",
+      "expected_date": "2006-10-12",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "25",
+      "pot_id": "1",
+      "street_name": "Askanierring",
+      "lat": "52.5478",
+      "lng": "13.1938",
+      "expected_date": "2021-07-21",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "26",
+      "pot_id": "1",
+      "street_name": "Asternplatz",
+      "lat": "52.4494",
+      "lng": "13.3044",
+      "expected_date": "2002-09-21",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "27",
+      "pot_id": "1",
+      "street_name": "Attilastr.",
+      "lat": "52.4494",
+      "lng": "13.3663",
+      "expected_date": "2020-09-06",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "28",
+      "pot_id": "1",
+      "street_name": "Bachstr.",
+      "lat": "52.516",
+      "lng": "13.3375",
+      "expected_date": "2020-09-06",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "29",
+      "pot_id": "1",
+      "street_name": "Bahnhofstr.",
+      "lat": "52.4548",
+      "lng": "13.5765",
+      "expected_date": "2007-02-21",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "30",
+      "pot_id": "1",
+      "street_name": "Barnetstr.",
+      "lat": "52.3961",
+      "lng": "13.3977",
+      "expected_date": "2014-02-16",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "31",
+      "pot_id": "1",
+      "street_name": "Bayerischer Platz",
+      "lat": "52.4884",
+      "lng": "13.3402",
+      "expected_date": "2006-10-12",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "32",
+      "pot_id": "1",
+      "street_name": "Beeskowdamm",
+      "lat": "52.4092",
+      "lng": "13.2707",
+      "expected_date": "2017-09-02",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "33",
+      "pot_id": "1",
+      "street_name": "Bergstr.",
+      "lat": "52.4585",
+      "lng": "13.3367",
+      "expected_date": "2013-01-09",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "34",
+      "pot_id": "1",
+      "street_name": "Berliner Str.",
+      "lat": "52.4386",
+      "lng": "13.2719",
+      "expected_date": "2012-02-19",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "35",
+      "pot_id": "1",
+      "street_name": "Berliner Str. (Her",
+      "lat": "52.52",
+      "lng": "13.405",
+      "expected_date": "2020-09-06",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "36",
+      "pot_id": "1",
+      "street_name": "Berliner Str. (Teg",
+      "lat": "52.5835",
+      "lng": "13.2891",
+      "expected_date": "2006-10-12",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "37",
+      "pot_id": "1",
+      "street_name": "Bernauer Str.",
+      "lat": "52.5677",
+      "lng": "13.2579",
+      "expected_date": "2017-09-02",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "38",
+      "pot_id": "1",
+      "street_name": "Bernstorffstr.",
+      "lat": "52.5907",
+      "lng": "13.2851",
+      "expected_date": "2011-10-29",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "39",
+      "pot_id": "1",
+      "street_name": "Beusselstr.",
+      "lat": "52.5311",
+      "lng": "13.3286",
+      "expected_date": "2015-05-07",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "40",
+      "pot_id": "1",
+      "street_name": "Birkbuschstr.",
+      "lat": "52.4475",
+      "lng": "13.3264",
+      "expected_date": "2020-09-06",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "41",
+      "pot_id": "1",
+      "street_name": "Bismarckstr.",
+      "lat": "52.5119",
+      "lng": "13.3093",
+      "expected_date": "2013-01-09",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "42",
+      "pot_id": "1",
+      "street_name": "Blanckertzweg",
+      "lat": "52.4182",
+      "lng": "13.3165",
+      "expected_date": "2021-07-21",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "43",
+      "pot_id": "1",
+      "street_name": "Bolivarallee",
+      "lat": "52.5188",
+      "lng": "13.2619",
+      "expected_date": "2020-03-16",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "44",
+      "pot_id": "1",
+      "street_name": "Borsigdamm",
+      "lat": "52.5814",
+      "lng": "13.2749",
+      "expected_date": "2004-07-11",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "45",
+      "pot_id": "1",
+      "street_name": "Breite Str./ Stabh",
+      "lat": "52.52",
+      "lng": "13.405",
+      "expected_date": "2009-05-09",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "46",
+      "pot_id": "1",
+      "street_name": "Breite Str./ Stabh",
+      "lat": "52.52",
+      "lng": "13.405",
+      "expected_date": "2009-05-09",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "47",
+      "pot_id": "1",
+      "street_name": "Breite Str./ Stabh",
+      "lat": "52.52",
+      "lng": "13.405",
+      "expected_date": "2009-05-09",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "48",
+      "pot_id": "1",
+      "street_name": "Brenner Str.",
+      "lat": "52.5587",
+      "lng": "13.407",
+      "expected_date": "2013-05-16",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "49",
+      "pot_id": "1",
+      "street_name": "Buckower Chaussee",
+      "lat": "52.4117",
+      "lng": "13.3874",
+      "expected_date": "2015-05-07",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "50",
+      "pot_id": "1",
+      "street_name": "Budapester Str.",
+      "lat": "52.5058",
+      "lng": "13.3415",
+      "expected_date": "2008-05-08",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "51",
+      "pot_id": "1",
+      "street_name": "Buddestr.",
+      "lat": "52.5901",
+      "lng": "13.2875",
+      "expected_date": "2004-07-11",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "52",
+      "pot_id": "1",
+      "street_name": "Bundesallee",
+      "lat": "52.4822",
+      "lng": "13.3298",
+      "expected_date": "2010-08-19",
+      "expected_cost": "2500"
+    },
+    {
+      "id": "53",
+      "pot_id": "1",
+      "street_name": "Burgfrauenstr.",
+      "lat": "52.6266",
+      "lng": "13.3024",
+      "expected_date": "2020-03-16",
+      "expected_cost": "2500"
+    }
+  ]
 }

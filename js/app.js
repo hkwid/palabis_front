@@ -39,9 +39,80 @@
 
     var newMarker = null;
     var markers = [];
+
+// Get map information by pull down
+    $('.city-select li').click(function () {
+        var place = $(this).text();
+        var map_infomation = $.ajax({
+            url: 'http://maps.google.com/maps/api/geocode/json?address=' + place + '&sensor=false',
+            type: "get",
+            data: {address:place, sensor:false},
+            async: false
+        });
+
+        if (map_infomation.success()) {
+            var lng = map_infomation.responseJSON.results[0].geometry.location.lng;
+            var lat = map_infomation.responseJSON.results[0].geometry.location.lat;
+
+
+            setTimeout(function() {
+                $('body').removeClass('notransition');
+
+                map = new google.maps.Map(document.getElementById('mapView'), options);
+                var styledMapType = new google.maps.StyledMapType(styles, {
+                    name : 'Styled'
+                });
+
+                map.mapTypes.set('Styled', styledMapType);
+                map.setCenter(new google.maps.LatLng(lat,lng));
+                map.setZoom(12);
+
+                google.maps.event.addListener(map, 'idle', function() {
+                    getPotholes(map);
+                    addMarkers(props, map);
+                });
+
+                if ($('#address').length > 0) {
+                    newMarker = new google.maps.Marker({
+                        position: new google.maps.LatLng(lat,lng),
+                        map: map,
+                        icon: new google.maps.MarkerImage(
+                            'images/marker-new.png',
+                            null,
+                            null,
+                            // new google.maps.Point(0,0),
+                            null,
+                            new google.maps.Size(36, 36)
+                        ),
+                        draggable: true,
+                        animation: google.maps.Animation.DROP
+                    });
+
+                    google.maps.event.addListener(newMarker, "mouseup", function(event) {
+                        var latitude = this.position.lat();
+                        var longitude = this.position.lng();
+                        $('#latitude').text(this.position.lat());
+                        $('#longitude').text(this.position.lng());
+                    });
+                }
+
+                addMarkers(props, map);
+            }, 300);
+            return map_infomation.responseJSON;
+        } else {
+            return map_infomation.error();
+        }
+
+    });
 //-----------------> my code <--------------------------//
     var today = new Date();
     var thisYear = today.getFullYear();
+    var filter = {
+      min_year: 1950,
+      max_year: 2050,
+      min_cost: 0,
+      max_cost: 20000
+    };
     /* get current position
      **
      */
@@ -122,8 +193,9 @@
                 console.log(data.error);
             } else {
                 console.log('get dummy potholes :)');
-                setProps(data.potholes)
-                return data.potholes;
+                //console.dir(data.potholes);
+                setProps(data.potholes);
+                return getDummyPotholes;
             };
         });
     };
@@ -153,7 +225,7 @@
         //console.log('lat: ' + Math.round( _avrLat * 10000 ) / 10000 + ', ' + 'lng: ' + Math.round( _avrLng * 10000 ) / 10000);
         var out_obj = {
             'title': in_obj.street_name,
-            'image' : '2-1-thmb.png',
+            'image' : './kanbotsu.jpg',
             'diff' : _diff,
             'price' : '€' + _price,
             'address' : 'lat: ' + Math.round( _lat * 1000 ) / 1000 + ', ' + 'lng: ' + Math.round( _lng * 1000 ) / 1000,
@@ -219,10 +291,18 @@
             console.log(props);
             var _props = filterByYear(props, 2000, 2017);
             addMarkers(_props, map);
+        } else if(e.keyCode === 67) {
+            // f key
+            //filterByYear(props, 2017, 2015);
+            var _props = simulateByYear(props, 2020);
+            setTimeout(addMarkers(_props, map), 400);
         }
     };
 
     function filterByYear(props, min_year, max_year) {
+        var _minYear = Number(min_year);
+        var _maxYear = Number(max_year);
+        console.log('year: ' + _minYear + ' - ' + _maxYear);
         var _out = [];
         $.map(props, function(prop, id) {
             var _expected_date = castToDate(prop.expected_date);
@@ -231,6 +311,68 @@
             if((_year >= min_year) && (_year <= max_year)) {
               _out.push(prop);
             }
+        });
+        return _out;
+    };
+
+    function filterByCost(props, min_cost, max_cost) {
+        console.log('cost: ' + min_cost + ' - ' + max_cost);
+        var _out = [];
+        $.map(props, function(prop, id) {
+          var _cost = prop.price.replace(/€/gi, '');
+          _cost = Number(_cost);
+          //console.log(_cost);
+
+          if((_cost >= min_cost) && (_cost <= max_cost)) {
+            _out.push(prop);
+          }
+        });
+        return _out;
+    };
+
+    function simulateByYear(props, sim_year) {
+
+        console.log('sim_year: ' + sim_year);
+        var _out = [];
+        var _sim_year = new Date(sim_year+'-01-01');
+        $.map(props, function(prop, id) {
+          var _expected_date =  castToDate(prop.expected_date);
+          var _diff = getDiffYear(_expected_date, _sim_year);
+          //console.log(_sim_year);
+          //console.log(_diff);
+          var _markerColor = '';
+          var _price = Number(prop.price.replace(/€/gi, ''));
+          if(_diff < 0) _diff *= -1;
+          if(_diff < 3) {
+            _markerColor = 'green';
+            //_price *= 1;
+          } else if (( _diff >= 3) && (_diff < 6)) {
+            _markerColor = 'yellow';
+            _price *= 2;
+          } else if (_diff >= 6) {
+            _markerColor = 'red';
+            _price *= 3;
+          } else {
+            console.log('never come here!');
+          }
+
+        //console.log('lat: ' + Math.round( _avrLat * 10000 ) / 10000 + ', ' + 'lng: ' + Math.round( _avrLng * 10000 ) / 10000);
+          var _outObj = {
+              'title': prop.title,
+              'image' : '2-1-thmb.png',
+              'diff' : _diff,
+              'price' : '€' + _price,
+              'address' : prop.address,
+              'bedrooms' : '3',
+              'bathrooms' : '2',
+              'expected_date' : prop.expected_date,
+              'position' : prop.position,
+              'markerIcon' : "marker-" + _markerColor+ ".png"
+          };
+          if(id === 0) {
+            console.log(_diff);
+          }
+          _out.push(_outObj);
         });
         return _out;
     };
@@ -284,7 +426,9 @@
                 '</div>' +
                 '<div class="paWrapper">' +
                 '<div class="propTitle">' + prop.title + '</div>' +
-                '<div class="propAddress">' + prop.address + '</div>' +
+                '<div class="propAddress">' + prop.address + '<br>' +
+                  prop.expected_date +
+                '</div>' +
                 '</div>' +
                 '<div class="propRating">' +
                 '<span class="fa fa-star"></span>' +
@@ -294,9 +438,9 @@
                 '<span class="fa fa-star-o"></span>' +
                 '</div>' +
                 '<ul class="propFeat">' +
-                '<li><span class="fa fa-moon-o"></span> ' + prop.bedrooms + '</li>' +
-                '<li><span class="icon-drop"></span> ' + prop.bathrooms + '</li>' +
-                '<li><span class="icon-frame"></span> ' + prop.area + '</li>' +
+                //'<li><span class="fa fa-moon-o"></span> ' + prop.bedrooms + '</li>' +
+                //'<li><span class="icon-drop"></span> ' + prop.bathrooms + '</li>' +
+                //'<li><span class="icon-frame"></span> ' + prop.area + '</li>' +
                 '</ul>' +
                 '<div class="clearfix"></div>' +
                 '<div class="infoButtons">' +
@@ -419,9 +563,19 @@
         map.setZoom(12);
 
         google.maps.event.addListener(map, 'idle', function() {
-            //getPotholes(map);
-            getDummyPotholes();
-            addMarkers(props, map);
+            getPotholes(map);
+            //getDummyPotholes();
+            setTimeout(function(){
+              addMarkers(props, map);
+            }, 400);
+        });
+
+        google.maps.event.addListener(map, 'zoom_changed', function() {
+            getPotholes(map);
+            //getDummyPotholes();
+            setTimeout(function(){
+              addMarkers(props, map);
+            }, 400);
         });
 
         if ($('#address').length > 0) {
@@ -568,9 +722,9 @@
     $('.priceSlider').slider({
         range: true,
         min: 0,
-        max: 2000000,
-        values: [500000, 1500000],
-        step: 10000,
+        max: 20000,
+        values: [1000, 20000],
+        step: 1000,
         slide: function(event, ui) {
             $('.priceSlider .sliderTooltip .stLabel').html(
                 '€' + ui.values[0].toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") +
@@ -581,8 +735,17 @@
             var priceSliderRangeWidth = $('.priceSlider .ui-slider-range').width();
             var priceSliderLeft = priceSliderRangeLeft + ( priceSliderRangeWidth / 2 ) - ( $('.priceSlider .sliderTooltip').width() / 2 );
             $('.priceSlider .sliderTooltip').css('left', priceSliderLeft);
-
-
+        },
+        change: function(event, ui) {
+          clearMarkers();
+          // filter.min_cost = parseInt(ui.values[0], 10);
+          // filter.max_cost = parseInt(ui.values[1], 10);
+          filter.min_cost = ui.values[0];
+          filter.max_cost = ui.values[1];
+          var _props = filterByCost(props, ui.values[0], ui.values[1]);
+          _props = filterByYear(props, filter.min_year, filter.max_year);
+          addMarkers(_props, map);
+          //console.log('year: ' + ui.values[0] + '-' + ui.values[1]);
         }
     });
     $('.priceSlider .sliderTooltip .stLabel').html(
@@ -642,7 +805,10 @@
         },
         change: function(event, ui) {
           clearMarkers();
-          var _props = filterByYear(props, ui.values[0], ui.values[1]);
+          filter.min_year = ui.values[0];
+          filter.max_year = ui.values[1];
+          var _props = filterByCost(props, filter.min_cost, filter.max_cost);
+          _props = filterByYear(_props, ui.values[0], ui.values[1]);
           addMarkers(_props, map);
           //console.log('year: ' + ui.values[0] + '-' + ui.values[1]);
         }
@@ -732,6 +898,11 @@
         slide: function(event, ui) {
             repositionTooltip
             map.setZoom(ui.value);
+            //getDummyPotholes();
+            getPotholes(map);
+            setTimeout(function(){
+              addMarkers(props, map);
+            }, 400);
         }
     });
     $("#slider1 .ui-slider-handle:first").tooltip({
@@ -740,10 +911,17 @@
 
     $("#slider2").slider({
         value: thisYear,
-        min: 2000,
+        min: thisYear,
         max: 2050,
         slide: repositionTooltip,
-        stop: repositionTooltip
+        stop: repositionTooltip,
+        change: function(event, ui){
+          clearMarkers();
+          var _props = filterByCost(props, filter.min_cost, filter.max_cost);
+          _props = filterByYear(_props, filter.min_year, filter.max_year);
+          _props = simulateByYear(_props, ui.value);
+          setTimeout(addMarkers(_props, map), 400);
+        }
     });
     $("#slider2 .ui-slider-handle:first").tooltip({ title: $("#slider2").slider("value"), trigger: "manual"}).tooltip("show");
 
