@@ -39,6 +39,9 @@
 
     var newMarker = null;
     var markers = [];
+    var resultPotholes = [];
+    var pages = 1;
+    var currentPage = 1;
 
 // Get map information by pull down
     $('.city-select li').click(function () {
@@ -157,10 +160,12 @@
     // json for properties markers on map
     var props = [];
     var setProps = function setProps(data) {
+        props = [];
         $.each( data, function( key, val ) {
-            var _pothole = makeMaker(val);
+            var _pothole = makeMarker(val);
             props.push(_pothole);
         });
+        pages = Math.ceil(props.length / 6);
     };
 
     var getPotholes = function getPotholes(map) {
@@ -195,12 +200,12 @@
                 console.log('get dummy potholes :)');
                 //console.dir(data.potholes);
                 setProps(data.potholes);
-                return getDummyPotholes;
+                return data.potholes;
             };
         });
     };
 
-    var makeMaker = function makeMaker(in_obj){
+    var makeMarker = function makeMarker(in_obj){
         var _lat = Number(in_obj.lat);
         var _lng = Number(in_obj.lng);
 
@@ -209,19 +214,21 @@
         var _expected_date = castToDate(in_obj.expected_date);
         var _diff = getDiffYear(_expected_date, today);
 
+        if(_diff < 0) _diff *= -1;
         if(_diff < 3) {
             _markerColor = 'green';
-            //_price *= 1;
+            //
         } else if (( _diff >= 3) && (_diff < 6)) {
             _markerColor = 'yellow';
-            _price *= 2;
+            //_price *= 2;
         } else if (_diff >= 6) {
             _markerColor = 'red';
-            _price *= 3;
+            //_price *= 3;
         } else {
             console.log('never come here!');
         }
-
+        _price *= _diff;
+        if(_price > 20000) { _price = 20000};
         //console.log('lat: ' + Math.round( _avrLat * 10000 ) / 10000 + ', ' + 'lng: ' + Math.round( _avrLng * 10000 ) / 10000);
         var out_obj = {
             'title': in_obj.street_name,
@@ -334,14 +341,14 @@
       var _out = [];
       var _minYear = Number(min_year);
       var _maxYear = Number(max_year);
-      console.log('cost: ' + min_cost + ' - ' + max_cost);
-      console.log('year: ' + _minYear + ' - ' + _maxYear);
+      //console.log('cost: ' + min_cost + ' - ' + max_cost);
+      //console.log('year: ' + _minYear + ' - ' + _maxYear);
+      infobox.open(null,null);
       $.map(props, function(prop, id) {
           var _cost = prop.price.replace(/€/gi, '');
           _cost = Number(_cost);
           var _expected_date = castToDate(prop.expected_date);
           var _year = _expected_date.getFullYear();
-
 
           if((_cost >= min_cost) && (_cost <= max_cost) && (_year >= min_year) && (_year <= max_year)) {
             _out.push(prop);
@@ -352,7 +359,7 @@
 
     function simulateByYear(props, sim_year) {
 
-        console.log('sim_year: ' + sim_year);
+        //console.log('sim_year: ' + sim_year);
         var _out = [];
         var _sim_year = new Date(sim_year+'-01-01');
         $.map(props, function(prop, id) {
@@ -368,14 +375,15 @@
             //_price *= 1;
           } else if (( _diff >= 3) && (_diff < 6)) {
             _markerColor = 'yellow';
-            _price *= 2;
+            //_price *= 2;
           } else if (_diff >= 6) {
             _markerColor = 'red';
-            _price *= 3;
+            //_price *= 3;
           } else {
             console.log('never come here!');
           }
-
+          _price *= _diff;
+          if(_price > 20000) { _price = 20000};
         //console.log('lat: ' + Math.round( _avrLat * 10000 ) / 10000 + ', ' + 'lng: ' + Math.round( _avrLng * 10000 ) / 10000);
           var _outObj = {
               'title': prop.title,
@@ -389,12 +397,15 @@
               'position' : prop.position,
               'markerIcon' : "marker-" + _markerColor+ ".png"
           };
-          if(id === 0) {
-            console.log(_diff);
-          }
           _out.push(_outObj);
         });
         return _out;
+    };
+
+    function getResultPotholes(resultph, page) {
+      var _page = parseInt(page, 10) - 1;
+      $(".resultsList .row .col-xs-12").remove();
+        $(".resultsList .row").append(resultph.slice(0 + 6*_page, 6 + 6*_page));
     };
 
 //-----------------> my code <--------------------------//
@@ -421,7 +432,8 @@
 
     // function that adds the markers on map
     var addMarkers = function(props, map) {
-        $.each(props, function(i,prop) {
+        resultPotholes = [];
+        $.each(props, function(i, prop) {
             var latlng = new google.maps.LatLng(prop.position.lat,prop.position.lng);
             var marker = new google.maps.Marker({
                 position: latlng,
@@ -465,7 +477,7 @@
                 '<div class="clearfix"></div>' +
                 '<div class="infoButtons">' +
                 '<a class="btn btn-sm btn-round btn-gray btn-o closeInfo">Close</a>' +
-                '<a href="single.html" class="btn btn-sm btn-round btn-green viewInfo">View</a>' +
+                '<a href="#" class="btn btn-sm btn-round btn-green viewInfo">View</a>' +
                 '</div>' +
                 '</div>';
 
@@ -481,6 +493,71 @@
             });
 
             markers.push(marker);
+
+            var resultPothole = '<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">' +
+            '<a href="#" class="card">' +
+            '<div class="figure">' +
+            '<img src="images/prop/' + prop.image + '" alt="image">' +
+            '<div class="figCaption">' +
+            '<div>' + prop.price + '</div>' +
+            '<span class="icon-eye"> 200</span>' +
+            '<span class="icon-heart"> 54</span>' +
+            '<span class="icon-bubble"> 13</span>' +
+            '</div>' +
+            '<div class="figView"><span class="icon-eye"></span></div>' +
+            '</div>' +
+            '<h2>' + prop.title + '</h2>' +
+            '<div class="cardAddress"><span class="icon-pointer"></span>' + prop.address + '</div>' +
+            '<div class="cardRating">' +
+            '<span class="fa fa-star"></span>' +
+            '<span class="fa fa-star"></span>' +
+            '<span class="fa fa-star"></span>' +
+            '<span class="fa fa-star"></span>' +
+            '<span class="fa fa-star-o"></span>' +
+            '</div>' +
+            // '<ul class="cardFeat">' +
+            // '<li><span class="fa fa-moon-o"></span> 3</li>' +
+            // '<li><span class="icon-drop"></span> 2</li>' +
+            // '<li><span class="icon-frame"></span> 3430 Sq Ft</li>' +
+            // '</ul>' +
+            '<div class="clearfix"></div>' +
+            '</a>' +
+            '</div>';
+
+            resultPotholes.push(resultPothole);
+        });
+
+        console.log(resultPotholes.length);
+        pages = Math.ceil(resultPotholes.length / 6);
+        $(".resultsList .row .col-xs-12").remove();
+        $(".resultsList .row").append(resultPotholes.slice(0, 6));
+
+        var pagenations = '<li class="disabled"><a href="#"><span class="fa fa-angle-left"></span></a></li>';
+        // var pagenations = '';
+        //console.log(pages);
+        for(var i = 1; i <= pages; i++) {
+          pagenations += '<li><a href="#">' + i +'</a></li>';
+        }
+        pagenations += '<li><a href="#"><span class="fa fa-angle-right"></span></a></li>';
+        //console.log(pagenations);
+        $(".pagination li").remove();
+        $('.pagination').append(pagenations);
+        $(".pagination li").eq(currentPage).removeClass('disable').addClass('active');
+
+        // page nation
+        $('.pagination > li > a').on('click', function(e){
+          var _html = this.text;
+
+          currentPage = parseInt(_html, 10);
+          if(currentPage <= 1) {
+            currentPage = 1;
+          } else if(currentPage >= pages) {
+            currentPage = pages;
+          }
+          $('.pagination .active').removeClass('active');
+          $(this).parent().addClass('active');
+          getResultPotholes(resultPotholes, currentPage);
+          console.log(currentPage);
         });
     }
 
@@ -583,16 +660,16 @@
         map.setZoom(12);
 
         google.maps.event.addListener(map, 'idle', function() {
-            getPotholes(map);
-            //getDummyPotholes();
+            //getPotholes(map);
+            getDummyPotholes();
             setTimeout(function(){
               addMarkers(props, map);
             }, 400);
         });
 
         google.maps.event.addListener(map, 'zoom_changed', function() {
-            getPotholes(map);
-            //getDummyPotholes();
+            //getPotholes(map);
+            getDummyPotholes();
             setTimeout(function(){
               addMarkers(props, map);
             }, 400);
@@ -703,7 +780,7 @@
 
             var dateSliderRangeLeft = parseInt($('.dateSlider .ui-slider-range').css('left'));
             var dateSliderRangeWidth = $('.dateSlider .ui-slider-range').width();
-            var dateSliderLeft = areaSliderRangeLeft + ( dateSliderRangeWidth / 2 ) - ( $('.dateSlider .sliderTooltip').width() / 2 );
+            var dateSliderLeft = dateSliderRangeLeft + ( dateSliderRangeWidth / 2 ) - ( $('.dateSlider .sliderTooltip').width() / 2 );
             $('.dateSlider .sliderTooltip').css('left', dateSliderLeft);
 
             if (map) {
@@ -764,7 +841,7 @@
           filter.max_cost = ui.values[1];
           //var _props = filterByCost(props, ui.values[0], ui.values[1]);
           var _props = filterByCostAndYear(props, filter.min_cost, filter.max_cost, filter.min_year, filter.max_year);
-          addMarkers(_props, map);
+          setTimeout(addMarkers(_props, map), 400);
           //console.log('year: ' + ui.values[0] + '-' + ui.values[1]);
         }
     });
@@ -820,7 +897,7 @@
             );
             var dateSliderRangeLeft = parseInt($('.dateSlider .ui-slider-range').css('left'));
             var dateSliderRangeWidth = $('.dateSlider .ui-slider-range').width();
-            var dateSliderLeft = areaSliderRangeLeft + ( dateSliderRangeWidth / 2 ) - ( $('.dateSlider .sliderTooltip').width() / 2 );
+            var dateSliderLeft = dateSliderRangeLeft + ( dateSliderRangeWidth / 2 ) - ( $('.dateSlider .sliderTooltip').width() / 2 );
             $('.dateSlider .sliderTooltip').css('left', dateSliderLeft);
         },
         change: function(event, ui) {
@@ -830,7 +907,7 @@
           //var _props = filterByCost(props, filter.min_cost, filter.max_cost);
           //var _props = filterByYear(props, ui.values[0], ui.values[1]);
           var _props = filterByCostAndYear(props, filter.min_cost, filter.max_cost, filter.min_year, filter.max_year);
-          addMarkers(_props, map);
+          setTimeout(addMarkers(_props, map), 400);
           //console.log('year: ' + ui.values[0] + '-' + ui.values[1]);
         }
     });
@@ -841,7 +918,7 @@
     );
     var dateSliderRangeLeft = parseInt($('.dateSlider .ui-slider-range').css('left'));
     var dateSliderRangeWidth = $('.dateSlider .ui-slider-range').width();
-    var dateSliderLeft = areaSliderRangeLeft + ( dateSliderRangeWidth / 2 ) - ( $('.dateSlider .sliderTooltip').width() / 2 );
+    var dateSliderLeft = dateSliderRangeLeft + ( dateSliderRangeWidth / 2 ) - ( $('.dateSlider .sliderTooltip').width() / 2 );
     $('.dateSlider .sliderTooltip').css('left', dateSliderLeft);
 
     $('.volume .btn-round-right').click(function() {
@@ -919,8 +996,8 @@
         slide: function(event, ui) {
             repositionTooltip
             map.setZoom(ui.value);
-            getPotholes(map);
-            //getDummyPotholes();
+            //getPotholes(map);
+            getDummyPotholes();
             setTimeout(function(){
               addMarkers(props, map);
             }, 400);
@@ -1002,5 +1079,4 @@
     }
 
     $('input, textarea').placeholder();
-
 })(jQuery);
