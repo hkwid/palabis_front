@@ -3,13 +3,13 @@
 
     // Custom options for map
     var options = {
-            zoom : 14,
-            mapTypeId : 'Styled',
-            disableDefaultUI: true,
-            mapTypeControlOptions : {
-                mapTypeIds : [ 'Styled' ]
-            }
-        };
+        zoom : 14,
+        mapTypeId : 'Styled',
+        disableDefaultUI: true,
+        mapTypeControlOptions : {
+            mapTypeIds : [ 'Styled' ]
+        }
+    };
     var styles = [{
         stylers : [ {
             hue : "#cccccc"
@@ -40,191 +40,194 @@
     var newMarker = null;
     var markers = [];
 //-----------------> my code <--------------------------//
-  var today = new Date();
-  var thisYear = today.getFullYear();
-  /* get current position
-  **
-  */
-  var mapCenter = {
-    'lat': 52.529231599999996,
-    'lng': 13.378650799999999
-  };
-  var optionObj = {
-    "enableHighAccuracy": false ,
-    "timeout": 8000 ,
-    "maximumAge": 5000
-  };
-
-  if(navigator.geolocation) {
-    console.log( "Your device can get your current location" );
-    //console.log(optionObj);
-    //navigator.geolocation.getCurrentPosition(successFunc , errorFunc , optionObj);
-  } else {
-    console.log("Your device cannot get your current location");
-  }
-
-  function successFunc( position ) {
-    console.log('success');
-    mapCenter.lat = position.coords.latitude;
-    mapCenter.lng = position.coords.longitude;
-    console.log(mapCenter);
-  }
-
-  function errorFunc( error ) {
-  // エラーコードのメッセージを定義
-    var errorMessage = {
-      0: "原因不明のエラーが発生しました…。" ,
-      1: "位置情報の取得が許可されませんでした…。" ,
-      2: "電波状況などで位置情報が取得できませんでした…。" ,
-      3: "位置情報の取得に時間がかかり過ぎてタイムアウトしました…。"
+    var today = new Date();
+    var thisYear = today.getFullYear();
+    /* get current position
+     **
+     */
+    var mapCenter = {
+        'lat': 52.529231599999996,
+        'lng': 13.378650799999999
+    };
+    var optionObj = {
+        "enableHighAccuracy": false ,
+        "timeout": 8000 ,
+        "maximumAge": 5000
     };
 
-    console.log("error: " + errorMessage[error.code]);
-  }
+    if(navigator.geolocation) {
+        console.log( "Your device can get your current location" );
+        //console.log(optionObj);
+        //navigator.geolocation.getCurrentPosition(successFunc , errorFunc , optionObj);
+    } else {
+        console.log("Your device cannot get your current location");
+    }
+
+    function successFunc( position ) {
+        console.log('success');
+        mapCenter.lat = position.coords.latitude;
+        mapCenter.lng = position.coords.longitude;
+        console.log(mapCenter);
+    }
+
+    function errorFunc( error ) {
+        // エラーコードのメッセージを定義
+        var errorMessage = {
+            0: "原因不明のエラーが発生しました…。" ,
+            1: "位置情報の取得が許可されませんでした…。" ,
+            2: "電波状況などで位置情報が取得できませんでした…。" ,
+            3: "位置情報の取得に時間がかかり過ぎてタイムアウトしました…。"
+        };
+
+        console.log("error: " + errorMessage[error.code]);
+    }
 
 
-  // json for properties markers on map
-  var props = [];
-  var setProps = function setProps(data) {
-    $.each( data, function( key, val ) {
-        var _pothole = makeMaker(val);
-        props.push(_pothole);
-    });
-  };
+    // json for properties markers on map
+    var props = [];
+    var setProps = function setProps(data) {
+        $.each( data, function( key, val ) {
+            var _pothole = makeMaker(val);
+            props.push(_pothole);
+        });
+    };
 
-  var getPotholes = function getPotholes(map) {
-    var _potholes = $.ajax({
-      type: "POST",
-      url: "./ajax/map/",
-      data: {
-        'minLat':map.getBounds().getSouthWest().lat(),
-        'maxLat':map.getBounds().getNorthEast().lat(),
-        'minLng':map.getBounds().getSouthWest().lng(),
-        'maxLng':map.getBounds().getNorthEast().lng()
-      },
-      async: false,
-      }).responseJSON;
-    setProps(_potholes);
-    console.dir(_potholes);
+    var getPotholes = function getPotholes(map) {
+        var _potholes = $.ajax({
+            type: "POST",
+            url: "./ajax/map/",
+            data: {
+                'minLat':map.getBounds().getSouthWest().lat(),
+                'maxLat':map.getBounds().getNorthEast().lat(),
+                'minLng':map.getBounds().getSouthWest().lng(),
+                'maxLng':map.getBounds().getNorthEast().lng()
+            },
+            async: false,
+        }).responseJSON;
 
-    return result;
+        setProps(_potholes.potholes);
 
-  };
+        return _potholes.potholes;
+
+    };
 
     //getPotholes();
     /* making marker
-    **
-    **
-    */
+     **
+     **
+     */
     var getDummyPotholes = function getDummyPotholes() {
-      $.getJSON('./get_map.json', function(data) {
-        if(data.error === true) {
-          console.log(data.error);
-        } else {
-          console.log('get dummy potholes :)');
-          return data.potholes;
-        };
-      });
+        $.getJSON('./get_map.json', function(data) {
+            if(data.error === true) {
+                console.log(data.error);
+            } else {
+                console.log('get dummy potholes :)');
+                return data.potholes;
+            };
+        });
     };
 
     var makeMaker = function makeMaker(in_obj){
-      var _lat = Number(in_obj.lat);
-      var _lng = Number(in_obj.lng);
+        var _lat = Number(in_obj.lat);
+        var _lng = Number(in_obj.lng);
 
-      var _markerColor = '';
-      var _price = Number(in_obj.expected_cost);
-      var _expected_date = castToDate(in_obj.expected_date);
-      var _diff = getDiffYear(_expected_date, today);
+        var _markerColor = '';
+        var _price = Number(in_obj.expected_cost);
+        var _expected_date = castToDate(in_obj.expected_date);
+        var _diff = getDiffYear(_expected_date, today);
 
-      if(_diff < 3) {
-        _markerColor = 'green';
-        //_price *= 1;
-      } else if (( _diff >= 3) && (_diff < 6)) {
-        _markerColor = 'yellow';
-        _price *= 2;
-      } else if (_diff >= 6) {
-        _markerColor = 'red';
-        _price *= 3;
-      } else {
-        console.log('never come here!');
-      }
+        if(_diff < 3) {
+            _markerColor = 'green';
+            //_price *= 1;
+        } else if (( _diff >= 3) && (_diff < 6)) {
+            _markerColor = 'yellow';
+            _price *= 2;
+        } else if (_diff >= 6) {
+            _markerColor = 'red';
+            _price *= 3;
+        } else {
+            console.log('never come here!');
+        }
 
-      //console.log('lat: ' + Math.round( _avrLat * 10000 ) / 10000 + ', ' + 'lng: ' + Math.round( _avrLng * 10000 ) / 10000);
-      var out_obj = {
-        'title': in_obj.street_name,
-        'image' : '2-1-thmb.png',
-        'diff' : _diff,
-        'price' : '€' + _price,
-        'address' : 'lat: ' + Math.round( _lat * 1000 ) / 1000 + ', ' + 'lng: ' + Math.round( _lng * 1000 ) / 1000,
-        'bedrooms' : '3',
-        'bathrooms' : '2',
-        'expected_date' : in_obj.expected_date,
-        'position' : {
-              'lat' : _lat,
-              'lng' : _lng
-          },
-        'markerIcon' : "marker-" + _markerColor+ ".png"
-      };
+        //console.log('lat: ' + Math.round( _avrLat * 10000 ) / 10000 + ', ' + 'lng: ' + Math.round( _avrLng * 10000 ) / 10000);
+        var out_obj = {
+            'title': in_obj.street_name,
+            'image' : '2-1-thmb.png',
+            'diff' : _diff,
+            'price' : '€' + _price,
+            'address' : 'lat: ' + Math.round( _lat * 1000 ) / 1000 + ', ' + 'lng: ' + Math.round( _lng * 1000 ) / 1000,
+            'bedrooms' : '3',
+            'bathrooms' : '2',
+            'expected_date' : in_obj.expected_date,
+            'position' : {
+                'lat' : _lat,
+                'lng' : _lng
+            },
+            'markerIcon' : "marker-" + _markerColor+ ".png"
+        };
 
-      return out_obj;
+        console.log(out_obj);
+
+        return out_obj;
     };
 
-  var castToDate = function castTodate(date_a) {
-    var _temp = date_a.split('-');
-    var _year = _temp[0];
-    var _month = _temp[1];
-    var _date = _temp[2];
-    return new Date(_year, _month, _date);
-  }
-
-  var getDiffYear = function getDiffYear(date_a, date_b) {
-    var _diff = (date_a.getTime() - date_b.getTime())/(1000 * 60 * 60 *24*365);
-    _diff = Math.floor(_diff);
-    return _diff;
-  };
-
-  // filter ling
-  function setMapOnAll(map) {
-    for (var i = 0; i < markers.length; i++) {
-      markers[i].setMap(map);
+    var castToDate = function castTodate(date_a) {
+        var _temp = date_a.split('-');
+        var _year = _temp[0];
+        var _month = _temp[1];
+        var _date = _temp[2];
+        return new Date(_year, _month, _date);
     }
-  }
-  function clearMarkers() {
-    setMapOnAll(null);
-  }
-  function deleteMarkers() {
-    clearMarkers();
-    markers = [];
-  }
 
-  // test code
-  document.onkeydown = function (e){
-    if(!e) e = window.event;
-    //console.log(e.keyCode);
+    var getDiffYear = function getDiffYear(date_a, date_b) {
+        var _diff = (date_a.getTime() - date_b.getTime())/(1000 * 60 * 60 *24*365);
+        _diff = Math.floor(_diff);
+        return _diff;
+    };
 
-    if(e.keyCode === 68){
-      // d key
-      clearMarkers();
-
-    } else if(e.keyCode === 32) {
-      // space key
-      addMarkers(props, map);
-      // for (var i = 0; i < markers.length; i++) {
-      //   addMarkerWithTimeout(markers[i], i * 200);
-      // }
-    } else if(e.keyCode === 70) {
-      // f key
-      filterByYear(props, 2017, 2015);
+    // filter ling
+    function setMapOnAll(map) {
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(map);
+        }
     }
-  };
+    function clearMarkers() {
+        setMapOnAll(null);
+    }
+    function deleteMarkers() {
+        clearMarkers();
+        markers = [];
+    }
 
-  function filterByYear(props, min_year, max_year) {
-    var _out = [];
-    $.map(props, function(prop, id) {
-      var _expected_date = castToDate(prop.expected_date);
+    // test code
+    document.onkeydown = function (e){
+        if(!e) e = window.event;
+        //console.log(e.keyCode);
 
-    });
-  };
+        if(e.keyCode === 68){
+            // d key
+            clearMarkers();
+
+        } else if(e.keyCode === 32) {
+            // space key
+            addMarkers(props, map);
+            // for (var i = 0; i < markers.length; i++) {
+            //   addMarkerWithTimeout(markers[i], i * 200);
+            // }
+        } else if(e.keyCode === 70) {
+            // f key
+            //filterByYear(props, 2017, 2015);
+            console.log(props);
+        }
+    };
+
+    function filterByYear(props, min_year, max_year) {
+        var _out = [];
+        $.map(props, function(prop, id) {
+            var _expected_date = castToDate(prop.expected_date);
+
+        });
+    };
 
 //-----------------> my code <--------------------------//
 
@@ -255,7 +258,7 @@
             var marker = new google.maps.Marker({
                 position: latlng,
                 map: map,
-                icon: new google.maps.MarkerImage( 
+                icon: new google.maps.MarkerImage(
                     'images/' + prop.markerIcon,
                     null,
                     null,
@@ -266,35 +269,35 @@
                 //,animation: google.maps.Animation.DROP,
             });
             var infoboxContent = '<div class="infoW">' +
-                                    '<div class="propImg">' +
-                                        '<img src="images/prop/' + prop.image + '">' +
-                                        '<div class="propBg">' +
-                                            '<div class="propPrice">' + prop.price + '</div>' +
-                                            //'<div class="propType">' + prop.type + '</div>' +
-                                        '</div>' +
-                                    '</div>' +
-                                    '<div class="paWrapper">' +
-                                        '<div class="propTitle">' + prop.title + '</div>' +
-                                        '<div class="propAddress">' + prop.address + '</div>' +
-                                    '</div>' +
-                                    '<div class="propRating">' +
-                                        '<span class="fa fa-star"></span>' +
-                                        '<span class="fa fa-star"></span>' +
-                                        '<span class="fa fa-star"></span>' +
-                                        '<span class="fa fa-star"></span>' +
-                                        '<span class="fa fa-star-o"></span>' +
-                                    '</div>' +
-                                    '<ul class="propFeat">' +
-                                        '<li><span class="fa fa-moon-o"></span> ' + prop.bedrooms + '</li>' +
-                                        '<li><span class="icon-drop"></span> ' + prop.bathrooms + '</li>' +
-                                        '<li><span class="icon-frame"></span> ' + prop.area + '</li>' +
-                                    '</ul>' +
-                                    '<div class="clearfix"></div>' +
-                                    '<div class="infoButtons">' +
-                                        '<a class="btn btn-sm btn-round btn-gray btn-o closeInfo">Close</a>' +
-                                        '<a href="single.html" class="btn btn-sm btn-round btn-green viewInfo">View</a>' +
-                                    '</div>' +
-                                 '</div>';
+                '<div class="propImg">' +
+                '<img src="images/prop/' + prop.image + '">' +
+                '<div class="propBg">' +
+                '<div class="propPrice">' + prop.price + '</div>' +
+                    //'<div class="propType">' + prop.type + '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="paWrapper">' +
+                '<div class="propTitle">' + prop.title + '</div>' +
+                '<div class="propAddress">' + prop.address + '</div>' +
+                '</div>' +
+                '<div class="propRating">' +
+                '<span class="fa fa-star"></span>' +
+                '<span class="fa fa-star"></span>' +
+                '<span class="fa fa-star"></span>' +
+                '<span class="fa fa-star"></span>' +
+                '<span class="fa fa-star-o"></span>' +
+                '</div>' +
+                '<ul class="propFeat">' +
+                '<li><span class="fa fa-moon-o"></span> ' + prop.bedrooms + '</li>' +
+                '<li><span class="icon-drop"></span> ' + prop.bathrooms + '</li>' +
+                '<li><span class="icon-frame"></span> ' + prop.area + '</li>' +
+                '</ul>' +
+                '<div class="clearfix"></div>' +
+                '<div class="infoButtons">' +
+                '<a class="btn btn-sm btn-round btn-gray btn-o closeInfo">Close</a>' +
+                '<a href="single.html" class="btn btn-sm btn-round btn-green viewInfo">View</a>' +
+                '</div>' +
+                '</div>';
 
             google.maps.event.addListener(marker, 'click', (function(marker, i) {
                 return function() {
@@ -381,9 +384,9 @@
     var repositionTooltip = function( e, ui ){
         var div = $(ui.handle).data("bs.tooltip").$tip[0];
         var pos = $.extend({}, $(ui.handle).offset(), {
-                        width: $(ui.handle).get(0).offsetWidth,
-                        height: $(ui.handle).get(0).offsetHeight
-                    });
+            width: $(ui.handle).get(0).offsetWidth,
+            height: $(ui.handle).get(0).offsetHeight
+        });
         var actualWidth = div.offsetWidth;
 
         var tp = {left: pos.left + pos.width / 2 - actualWidth / 2}
@@ -411,6 +414,7 @@
 
         google.maps.event.addListener(map, 'idle', function() {
             getPotholes(map);
+            addMarkers(props, map);
         });
 
         if ($('#address').length > 0) {
@@ -494,12 +498,12 @@
 
     // functionality for map manipulation icon on mobile devices
     $('.mapHandler').click(function() {
-        if ($('#mapView').hasClass('mob-min') || 
-            $('#mapView').hasClass('mob-max') || 
-            $('#content').hasClass('mob-min') || 
+        if ($('#mapView').hasClass('mob-min') ||
+            $('#mapView').hasClass('mob-max') ||
+            $('#content').hasClass('mob-min') ||
             $('#content').hasClass('mob-max')) {
-                $('#mapView').toggleClass('mob-max');
-                $('#content').toggleClass('mob-min');
+            $('#mapView').toggleClass('mob-max');
+            $('#content').toggleClass('mob-min');
         } else {
             $('#mapView').toggleClass('min');
             $('#content').toggleClass('max');
@@ -562,7 +566,7 @@
         step: 10000,
         slide: function(event, ui) {
             $('.priceSlider .sliderTooltip .stLabel').html(
-                '€' + ui.values[0].toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") + 
+                '€' + ui.values[0].toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") +
                 ' <span class="fa fa-arrows-h"></span> ' +
                 '€' + ui.values[1].toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
             );
@@ -662,7 +666,7 @@
     //Enable swiping
     $(".carousel-inner").swipe( {
         swipeLeft:function(event, direction, distance, duration, fingerCount) {
-            $(this).parent().carousel('next'); 
+            $(this).parent().carousel('next');
         },
         swipeRight: function() {
             $(this).parent().carousel('prev');
