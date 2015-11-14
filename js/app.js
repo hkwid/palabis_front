@@ -40,6 +40,8 @@
     var newMarker = null;
     var markers = [];
 //-----------------> my code <--------------------------//
+  var today = new Date();
+  var thisYear = today.getFullYear();
   /* get current position
   **
   */
@@ -83,69 +85,57 @@
 
   // json for properties markers on map
   var props = [];
+  var setProps = function setProps(data) {
+    $.each( data, function( key, val ) {
+        var _pothole = makeMaker(val);
+        props.push(_pothole);
+    });
+  };
 
-    var getPotholes = function getPotholes(map) {
+  var getPotholes = function getPotholes(map) {
+    var _potholes = $.ajax({
+      type: "POST",
+      url: "./ajax/map/",
+      data: {
+        'minLat':map.getBounds().getSouthWest().lat(),
+        'maxLat':map.getBounds().getNorthEast().lat(),
+        'minLng':map.getBounds().getSouthWest().lng(),
+        'maxLng':map.getBounds().getNorthEast().lng()
+      },
+      async: false,
+      }).responseJSON;
+    setProps(_potholes);
+    console.dir(_potholes);
 
-        var _potholes = $.ajax({
-            type: "POST",
-            url: "./ajax/map/",
-            data: {
-                'minLat':map.getBounds().getSouthWest().lat(),
-                'maxLat':map.getBounds().getNorthEast().lat(),
-                'minLng':map.getBounds().getSouthWest().lng(),
-                'maxLng':map.getBounds().getNorthEast().lng()
-            },
-            async: false
-        }).responseJSON;
+    return result;
 
-        $.each( _potholes, function( key, val ) {
-            var _pothole = makeMaker(val);
-            props.push(_pothole);
-        });
-
-        return result;
-
-    };
-
-  //var getPotholes = function getPotholes() {
-  //      $.getJSON('./get_map.json', function(data) {
-  //          if(data.error === true) {
-  //
-  //              console.log(data.error);
-  //          } else {
-  //              console.log("ok");
-  //
-  //              var _potholes = data.potholes;
-  //              $.each( _potholes, function( key, val ) {
-  //                  var _pothole = makeMaker(val);
-  //                  props.push(_pothole);
-  //                  //console.log(_pothole);
-  //              });
-  //          }
-  //      });
-  //  };
+  };
 
     //getPotholes();
     /* making marker
     **
     **
     */
+    var getDummyPotholes = function getDummyPotholes() {
+      $.getJSON('./get_map.json', function(data) {
+        if(data.error === true) {
+          console.log(data.error);
+        } else {
+          console.log('get dummy potholes :)');
+          return data.potholes;
+        };
+      });
+    };
+
     var makeMaker = function makeMaker(in_obj){
-      var _avrLat = (Number(in_obj.from_lat) + Number(in_obj.to_lat)) / 2;
-      var _avrLng = (Number(in_obj.from_lng) + Number(in_obj.to_lng)) / 2;
+      var _lat = Number(in_obj.lat);
+      var _lng = Number(in_obj.lng);
 
       var _markerColor = '';
-      var today = new Date;
-      var _temp = in_obj.expected_date.split('-');
-      var _year = _temp[0];
-      var _month = _temp[1];
-      var _date = _temp[2];
-      var expected_date = new Date(_year, _month, _date);
-
-      var _diff = (expected_date.getTime() - today.getTime())/(1000 * 60 * 60 *24*365);
-      _diff = Math.floor(_diff);
-
       var _price = Number(in_obj.expected_cost);
+      var _expected_date = castToDate(in_obj.expected_date);
+      var _diff = getDiffYear(_expected_date, today);
+
       if(_diff < 3) {
         _markerColor = 'green';
         //_price *= 1;
@@ -158,25 +148,40 @@
       } else {
         console.log('never come here!');
       }
-      console.log('lat: ' + Math.round( _avrLat * 10000 ) / 10000 + ', ' + 'lng: ' + Math.round( _avrLng * 10000 ) / 10000);
+
+      //console.log('lat: ' + Math.round( _avrLat * 10000 ) / 10000 + ', ' + 'lng: ' + Math.round( _avrLng * 10000 ) / 10000);
       var out_obj = {
         'title': in_obj.street_name,
         'image' : '2-1-thmb.png',
-        'type' : 'For Sale',
+        'diff' : _diff,
         'price' : '€' + _price,
-        'address' : 'lat: ' + Math.round( _avrLat * 1000 ) / 1000 + ', ' + 'lng: ' + Math.round( _avrLng * 1000 ) / 1000,
+        'address' : 'lat: ' + Math.round( _lat * 1000 ) / 1000 + ', ' + 'lng: ' + Math.round( _lng * 1000 ) / 1000,
         'bedrooms' : '3',
         'bathrooms' : '2',
-        'area' : '3430 Sq Ft',
+        'expected_date' : in_obj.expected_date,
         'position' : {
-              'lat' : _avrLat,
-              'lng' : _avrLng
+              'lat' : _lat,
+              'lng' : _lng
           },
         'markerIcon' : "marker-" + _markerColor+ ".png"
       };
 
       return out_obj;
     };
+
+  var castToDate = function castTodate(date_a) {
+    var _temp = date_a.split('-');
+    var _year = _temp[0];
+    var _month = _temp[1];
+    var _date = _temp[2];
+    return new Date(_year, _month, _date);
+  }
+
+  var getDiffYear = function getDiffYear(date_a, date_b) {
+    var _diff = (date_a.getTime() - date_b.getTime())/(1000 * 60 * 60 *24*365);
+    _diff = Math.floor(_diff);
+    return _diff;
+  };
 
   // filter ling
   function setMapOnAll(map) {
@@ -197,7 +202,6 @@
     if(!e) e = window.event;
     //console.log(e.keyCode);
 
-
     if(e.keyCode === 68){
       // d key
       clearMarkers();
@@ -208,7 +212,18 @@
       // for (var i = 0; i < markers.length; i++) {
       //   addMarkerWithTimeout(markers[i], i * 200);
       // }
+    } else if(e.keyCode === 70) {
+      // f key
+      filterByYear(props, 2017, 2015);
     }
+  };
+
+  function filterByYear(props, min_year, max_year) {
+    var _out = [];
+    $.map(props, function(prop, id) {
+      var _expected_date = castToDate(prop.expected_date);
+
+    });
   };
 
 //-----------------> my code <--------------------------//
@@ -694,14 +709,14 @@
     $('.tooltipsContainer .btn').tooltip();
 
     $("#slider1").slider({
-        range: "min",
-        value: 14,
+        //range: "min",
+        value: 12,
         min: 10,
         max: 19,
-        slide: repositionTooltip,
         stop: repositionTooltip,
         slide: function(event, ui) {
-            console.log('year: ' + ui.values[0] + '-' + ui.values[1]);
+            repositionTooltip
+            map.setZoom(ui.value);
         }
     });
     $("#slider1 .ui-slider-handle:first").tooltip({
@@ -709,10 +724,9 @@
         trigger: "manual"}).tooltip("show");
 
     $("#slider2").slider({
-        range: "max",
-        value: 70,
-        min: 1,
-        max: 100,
+        value: thisYear,
+        min: 2000,
+        max: 2050,
         slide: repositionTooltip,
         stop: repositionTooltip
     });
