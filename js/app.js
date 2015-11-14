@@ -214,16 +214,20 @@
         var _expected_date = castToDate(in_obj.expected_date);
         var _diff = getDiffYear(_expected_date, today);
 
+        var _image = './kanbotsu-1.jpg';
+
         if(_diff < 0) _diff *= -1;
         if(_diff < 3) {
             _markerColor = 'green';
-            //
+            _image = './kanbotsu-1.jpg';
         } else if (( _diff >= 3) && (_diff < 6)) {
             _markerColor = 'yellow';
             //_price *= 2;
+            _image = './kanbotsu-2.jpg';
         } else if (_diff >= 6) {
             _markerColor = 'red';
             //_price *= 3;
+            _image = './kanbotsu-3.jpg';
         } else {
             console.log('never come here!');
         }
@@ -232,7 +236,7 @@
         //console.log('lat: ' + Math.round( _avrLat * 10000 ) / 10000 + ', ' + 'lng: ' + Math.round( _avrLng * 10000 ) / 10000);
         var out_obj = {
             'title': in_obj.street_name,
-            'image' : './kanbotsu.jpg',
+            'image' : _image,
             'diff' : _diff,
             'price' : '€' + _price,
             'address' : 'lat: ' + Math.round( _lat * 1000 ) / 1000 + ', ' + 'lng: ' + Math.round( _lng * 1000 ) / 1000,
@@ -289,13 +293,14 @@
         } else if(e.keyCode === 32) {
             // space key
             addMarkers(props, map);
+            console.log($("[title = 'this.title']").length);
             // for (var i = 0; i < markers.length; i++) {
             //   addMarkerWithTimeout(markers[i], i * 200);
             // }
         } else if(e.keyCode === 70) {
             // f key
             //filterByYear(props, 2017, 2015);
-            console.log(props);
+            //console.log(props);
             var _props = filterByYear(props, 2000, 2017);
             addMarkers(_props, map);
         } else if(e.keyCode === 67) {
@@ -445,6 +450,7 @@
                     null,
                     new google.maps.Size(36, 36)
                 ),
+                title: 'marker-' + i,
                 draggable: false
                 //,animation: google.maps.Animation.DROP,
             });
@@ -477,12 +483,22 @@
                 '<div class="clearfix"></div>' +
                 '<div class="infoButtons">' +
                 '<a class="btn btn-sm btn-round btn-gray btn-o closeInfo">Close</a>' +
-                '<a href="#" class="btn btn-sm btn-round btn-green viewInfo">View</a>' +
+                '<a href="#" class="btn btn-sm btn-round btn-blue viewInfo">View</a>' +
                 '</div>' +
                 '</div>';
 
             google.maps.event.addListener(marker, 'click', (function(marker, i) {
                 return function() {
+                    infobox.open(null,null);
+                    marker.setIcon(new google.maps.MarkerImage(
+                        'images/marker-blue.png',
+                        null,
+                        null,
+                        // new google.maps.Point(0,0),
+                        null,
+                        new google.maps.Size(36, 36)
+                    ));
+                    console.log(this.title);
                     infobox.setContent(infoboxContent);
                     infobox.open(map, marker);
                 }
@@ -494,7 +510,7 @@
 
             markers.push(marker);
 
-            var resultPothole = '<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">' +
+            var resultPothole = '<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 animated bounceIn">' +
             '<a href="#" class="card">' +
             '<div class="figure">' +
             '<img src="images/prop/' + prop.image + '" alt="image">' +
@@ -660,16 +676,16 @@
         map.setZoom(12);
 
         google.maps.event.addListener(map, 'idle', function() {
-            //getPotholes(map);
-            getDummyPotholes();
+            getPotholes(map);
+            //getDummyPotholes();
             setTimeout(function(){
               addMarkers(props, map);
             }, 400);
         });
 
         google.maps.event.addListener(map, 'zoom_changed', function() {
-            //getPotholes(map);
-            getDummyPotholes();
+            getPotholes(map);
+            //getDummyPotholes();
             setTimeout(function(){
               addMarkers(props, map);
             }, 400);
@@ -709,6 +725,7 @@
 
     // Header search icon transition
     $('.search input').focus(function() {
+        console.log($(this));
         $('.searchIcon').addClass('active');
     });
     $('.search input').blur(function() {
@@ -996,8 +1013,8 @@
         slide: function(event, ui) {
             repositionTooltip
             map.setZoom(ui.value);
-            //getPotholes(map);
-            getDummyPotholes();
+            getPotholes(map);
+            //getDummyPotholes();
             setTimeout(function(){
               addMarkers(props, map);
             }, 400);
