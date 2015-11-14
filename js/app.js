@@ -122,6 +122,7 @@
                 console.log(data.error);
             } else {
                 console.log('get dummy potholes :)');
+                setProps(data.potholes)
                 return data.potholes;
             };
         });
@@ -165,8 +166,6 @@
             },
             'markerIcon' : "marker-" + _markerColor+ ".png"
         };
-
-        console.log(out_obj);
 
         return out_obj;
     };
@@ -218,6 +217,8 @@
             // f key
             //filterByYear(props, 2017, 2015);
             console.log(props);
+            var _props = filterByYear(props, 2000, 2017);
+            addMarkers(_props, map);
         }
     };
 
@@ -225,8 +226,13 @@
         var _out = [];
         $.map(props, function(prop, id) {
             var _expected_date = castToDate(prop.expected_date);
+            var _year = _expected_date.getFullYear();
 
+            if((_year >= min_year) && (_year <= max_year)) {
+              _out.push(prop);
+            }
         });
+        return _out;
     };
 
 //-----------------> my code <--------------------------//
@@ -413,7 +419,8 @@
         map.setZoom(12);
 
         google.maps.event.addListener(map, 'idle', function() {
-            getPotholes(map);
+            //getPotholes(map);
+            getDummyPotholes();
             addMarkers(props, map);
         });
 
@@ -632,8 +639,12 @@
             var dateSliderRangeWidth = $('.dateSlider .ui-slider-range').width();
             var dateSliderLeft = areaSliderRangeLeft + ( dateSliderRangeWidth / 2 ) - ( $('.dateSlider .sliderTooltip').width() / 2 );
             $('.dateSlider .sliderTooltip').css('left', dateSliderLeft);
-
-            console.log('year: ' + ui.values[0] + '-' + ui.values[1]);
+        },
+        change: function(event, ui) {
+          clearMarkers();
+          var _props = filterByYear(props, ui.values[0], ui.values[1]);
+          addMarkers(_props, map);
+          //console.log('year: ' + ui.values[0] + '-' + ui.values[1]);
         }
     });
     $('.dateSlider .sliderTooltip .stLabel').html(
