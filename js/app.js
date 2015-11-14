@@ -50,7 +50,7 @@
   var optionObj = {
     "enableHighAccuracy": false ,
     "timeout": 8000 ,
-    "maximumAge": 5000 ,
+    "maximumAge": 5000
   };
 
   if(navigator.geolocation) {
@@ -74,7 +74,7 @@
       0: "原因不明のエラーが発生しました…。" ,
       1: "位置情報の取得が許可されませんでした…。" ,
       2: "電波状況などで位置情報が取得できませんでした…。" ,
-      3: "位置情報の取得に時間がかかり過ぎてタイムアウトしました…。" ,
+      3: "位置情報の取得に時間がかかり過ぎてタイムアウトしました…。"
     };
 
     console.log("error: " + errorMessage[error.code]);
@@ -83,25 +83,49 @@
 
   // json for properties markers on map
   var props = [];
-  var getPotholes = function getPotholes() {
-    $.getJSON('./get_map.json', function(data) {
-      if(data.error === true) {
 
-        console.log(data.error);
-      } else {
-        console.log("ok");
+    var getPotholes = function getPotholes(map) {
 
-        var _potholes = data.potholes;
+        var _potholes = $.ajax({
+            type: "POST",
+            url: "./ajax/map/",
+            data: {
+                'minLat':map.getBounds().getSouthWest().lat(),
+                'maxLat':map.getBounds().getNorthEast().lat(),
+                'minLng':map.getBounds().getSouthWest().lng(),
+                'maxLng':map.getBounds().getNorthEast().lng()
+            },
+            async: false
+        }).responseJSON;
+
         $.each( _potholes, function( key, val ) {
-          var _pothole = makeMaker(val);
-          props.push(_pothole);
-          //console.log(_pothole);
+            var _pothole = makeMaker(val);
+            props.push(_pothole);
         });
-      }
-    });
-  };
 
-    getPotholes();
+        return result;
+
+    };
+
+  //var getPotholes = function getPotholes() {
+  //      $.getJSON('./get_map.json', function(data) {
+  //          if(data.error === true) {
+  //
+  //              console.log(data.error);
+  //          } else {
+  //              console.log("ok");
+  //
+  //              var _potholes = data.potholes;
+  //              $.each( _potholes, function( key, val ) {
+  //                  var _pothole = makeMaker(val);
+  //                  props.push(_pothole);
+  //                  //console.log(_pothole);
+  //              });
+  //          }
+  //      });
+  //  };
+
+    //getPotholes();
     /* making marker
     **
     **
@@ -368,7 +392,11 @@
 
         map.mapTypes.set('Styled', styledMapType);
         map.setCenter(new google.maps.LatLng(52.529231599999996,13.378650799999999));
-        map.setZoom(19);
+        map.setZoom(12);
+
+        google.maps.event.addListener(map, 'idle', function() {
+            getPotholes(map);
+        });
 
         if ($('#address').length > 0) {
             newMarker = new google.maps.Marker({
@@ -383,7 +411,7 @@
                     new google.maps.Size(36, 36)
                 ),
                 draggable: true,
-                animation: google.maps.Animation.DROP,
+                animation: google.maps.Animation.DROP
             });
 
             google.maps.event.addListener(newMarker, "mouseup", function(event) {
@@ -716,7 +744,7 @@
     $('#tags').tagsInput({
         'height': 'auto',
         'width': '100%',
-        'defaultText': 'Add a tag',
+        'defaultText': 'Add a tag'
     });
 
     $('#datepicker').datepicker();
